@@ -19,7 +19,7 @@ body {
 
 #root {
   background-color: var(--swatch-primary);
-  font-family: 'Tangerine', serif;
+  font-family: 'Inter', serif;
   position: absolute;
   width: 80%;
   left: 10%;

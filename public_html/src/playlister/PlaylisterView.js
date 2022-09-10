@@ -8,7 +8,7 @@
  * @author ?
  */
 export default class PlaylisterView {
-    constructor() {}
+    constructor() { }
 
     /*
         init
@@ -18,9 +18,10 @@ export default class PlaylisterView {
     init() {
         // @todo - ONCE YOU IMPLEMENT THE FOOLPROOF DESIGN STUFF YOU SHOULD PROBABLY
         // START THESE BUTTONS OFF AS DISABLED
-        this.enableButton('undo-button');
-        this.enableButton('redo-button');
-        this.enableButton('close-button');
+        this.disableButton('undo-button');
+        this.disableButton('redo-button');
+        this.disableButton('close-button');
+        this.disableButton('add-song-button');
     }
 
     /*
@@ -113,9 +114,28 @@ export default class PlaylisterView {
             itemDiv.classList.add("unselected-list-card");
             itemDiv.id = "playlist-card-" + (i + 1);
 
+            let youTubeId = song.youTubeId;
+            let numberingSpan = document.createElement("span");
+            let numbering = document.createTextNode(i + 1 + ". ")
+            numberingSpan.appendChild(numbering)
+            itemDiv.appendChild(numberingSpan);
+
             // PUT THE CONTENT INTO THE CARD
+            let aTag = document.createElement("a");
+
             let itemText = document.createTextNode(song.title + " by " + song.artist);
-            itemDiv.appendChild(itemText);
+            aTag.appendChild(itemText);
+            aTag.href = "https://www.youtube.com/watch?v=" + youTubeId;
+
+            let deleteButton = document.createElement("input");
+            deleteButton.setAttribute("type", "button");
+            deleteButton.setAttribute("id", "delete-item-" + (i + 1));
+            deleteButton.setAttribute("class", "list-card-button");
+            deleteButton.setAttribute("value", "×");
+
+            itemDiv.appendChild(aTag);
+
+            itemDiv.appendChild(deleteButton);
 
             // AND PUT THE CARD INTO THE UI
             itemsDiv.appendChild(itemDiv);
@@ -156,8 +176,8 @@ export default class PlaylisterView {
         This function enables the button that has the id parameter
         as it's id property. This should be done as part of a foolproof
         design strategy.
-    */    
-   enableButton(id) {
+    */
+    enableButton(id) {
         let button = document.getElementById(id);
         button.classList.remove("disabled");
         button.disabled = false;
@@ -200,6 +220,30 @@ export default class PlaylisterView {
             this.disableButton("undo-button");
             this.disableButton("redo-button");
             this.disableButton("close-button");
+            this.disableButton("add-song-button");
+        }
+        else if (model.hasCurrentList()) {
+            this.enableButton("add-song-button");
+            if (tps.hasTransactionToRedo()) {
+                this.enableButton("redo-button");
+            } else {
+                this.disableButton("redo-button");
+            }
+            if (tps.hasTransactionToUndo()) {
+                this.enableButton("undo-button");
+            } else {
+                this.disableButton("undo-button");
+            }
+
+            this.enableButton("close-button");
+            this.disableButton("add-list-button");
+        }
+        else {
+            this.disableButton("add-song-button");
+            this.disableButton("undo-button");
+            this.disableButton("redo-button");
+            this.disableButton("close-button");
+            this.enableButton("add-list-button");
         }
     }
 
